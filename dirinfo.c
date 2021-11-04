@@ -4,13 +4,16 @@
 #include <dirent.h>
 #include <sys/types.h>
 #include <time.h>
+#include <unistd.h>
+#include <errno.h>
+#include <string.h>
 
 /* For the current directory ("./")
 list all the files in the directory
 specify which files are directories (if any)
 show the total size of all the regular files the directory
 note that you do not have to recursively go through any subdirectories to find their size for this part (unless you want to, but that is not a simple task)
-Possible enhancements:
+Possible enhancements:cd Doc    
 Recursively list the files in any subdirectories, update the total to include the total size of subdirectories
 Print out the size in a more readable format (like using KB, MB, GB for -byte prefixes)
 Make it look more like $ ls -l
@@ -59,10 +62,25 @@ void printperm(int a) {
 
 
 
-int main() {
+int main(int argc, char *argv[] ) {
 
-    DIR *current = opendir("./");
-    if (current == NULL) printf("Failed");
+    char directory[150];
+
+    if (argc == 1) {
+        printf("Enter a directory to scan ");
+        fgets(directory, 150, stdin);
+        directory[strlen(directory) - 1] = 0;
+    } 
+    else if (argc > 1){ // $make run ARGS=directory_name
+        strcpy(directory, argv[1]);
+    }
+
+    DIR *current = opendir(directory);
+
+    if (!current) {
+        printf("Failed. Error: %s\n", strerror(errno));
+        return 0;
+    }
     struct dirent *entry;
     struct stat s;
     
@@ -107,4 +125,5 @@ int main() {
 
 
     closedir(current);
+    return 0;
 }

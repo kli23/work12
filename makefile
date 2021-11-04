@@ -3,7 +3,7 @@ all: dirinfo.o
 dirinfo.o: dirinfo.c
 	gcc -c dirinfo.c
 run:
-	./dirinfo
+	./dirinfo $(ARGS)
 clean:
 	rm dirinfo
 	rm *.o
